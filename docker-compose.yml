@@ -1,0 +1,81 @@
+version: '3'
+services:
+  runtimealpha1:
+    build:
+      context: .
+      dockerfile: Dockerfile.alpha
+    container_name: runtimealpha1
+    image: runtimealpha
+    command: ["python", "runtime_alpha.py"]
+    restart: always
+
+  runtimealpha2:
+    build:
+      context: .
+      dockerfile: Dockerfile.alpha
+    container_name: runtimealpha2
+    image: runtimealpha
+    command: ["python", "runtime_alpha.py"]
+    restart: always
+    depends_on:
+      - runtimealpha1
+
+  runtimealpha3:
+    build:
+      context: .
+      dockerfile: Dockerfile.alpha
+    container_name: runtimealpha3
+    image: runtimealpha
+    command: ["python", "runtime_alpha.py"]
+    restart: always
+    depends_on:
+      - runtimealpha2
+
+  runtimebeta1:
+    build:
+      context: .
+      dockerfile: Dockerfile.beta
+    container_name: runtimebeta1
+    image: runtimebeta
+    command: ["python", "runtime_beta.py"]
+    restart: always
+    depends_on:
+      - runtimealpha3
+
+  runtimebeta2:
+    build:
+      context: .
+      dockerfile: Dockerfile.beta
+    container_name: runtimebeta2
+    image: runtimebeta
+    command: ["python", "runtime_beta.py"]
+    restart: always
+    depends_on:
+      - runtimebeta1
+
+  runtimebeta3:
+    build:
+      context: .
+      dockerfile: Dockerfile.beta
+    container_name: runtimebeta3
+    image: runtimebeta
+    command: ["python", "runtime_beta.py"]
+    restart: always
+    depends_on:
+      - runtimebeta2
+
+  dispatcher:
+    build:
+      context: .
+      dockerfile: Dockerfile.dispatcher
+    image: dispatcher
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - runtimebeta3
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

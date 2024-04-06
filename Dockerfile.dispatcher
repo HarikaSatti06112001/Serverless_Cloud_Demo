@@ -1,0 +1,16 @@
+# Dockerfile.dispatcher
+FROM python:3.9-slim
+
+# Set the working directory in the container to /app.
+WORKDIR /app
+
+# Copy the Python scripts into the container at /app.
+COPY dispatcher.py .
+COPY auth.py .
+COPY requirements.txt .
+
+# Install Python dependencies specified in requirements.txt.
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Starts the dispatcher service by running dispatcher.py with Python
+CMD ["python", "dispatcher.py"]

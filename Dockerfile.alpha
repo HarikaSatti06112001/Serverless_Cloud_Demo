@@ -1,0 +1,11 @@
+FROM python:3.9-slim
+
+# Set the working directory in the container to /app. 
+WORKDIR /app
+
+# Copy the Python scripts into the container at /app.
+COPY runtimes.py .
+COPY runtime_alpha.py .
+
+# CMD ["python", "-c", "from runtimes import RuntimeAlpha; r = RuntimeAlpha(); r.load(); while True: continue"]
+CMD ["python", "runtime_alpha.py"]
